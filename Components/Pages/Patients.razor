@@ -1,0 +1,287 @@
+@page "/patients"
+@using Volo.Abp.Application.Dtos
+@using PatientSystem.Entities.Patients
+@using PatientSystem.Services.Patients
+@using PatientSystem.Services.Dtos.Patients
+@using PatientSystem.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@inject IStringLocalizer<PatientSystemResource> L
+@inject AbpBlazorMessageLocalizerHelper<PatientSystemResource> LH
+@inject IPatientAppService PatientAppService
+@inherits AbpCrudPageBase<IPatientAppService, PatientDto, Guid, PagedAndSortedResultRequestDto, CreateUpdatePatientDto>
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between" Style="margin-bottom: 1rem;">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h2>@L["Patients"]</h2>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="OpenCreateModalAsync">@L["NewPatient"]</Button>
+            </Column>
+        </Row>
+        <Row Style="margin-bottom: 1rem;">
+            <Column>
+                <InputText @bind-Value="SearchText" Placeholder="@L["SearchPatients"]"
+                           Class="form-control" />
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Style="background-color: #ff9800; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="OnSearch">@L["Search"]</Button>
+            </Column>
+        </Row>
+        <Row Style="margin-bottom: 1rem;">
+            <Column>
+                <NumericEdit TValue="int?" @bind-Value="FilterAge" Placeholder="@L["Filter by Age"]" />
+            </Column>
+            <Column>
+                <DateEdit TValue="DateTime?" @bind-Date="FilterAdmissionDate" Placeholder="@L["Filter by Admission Date"]" />
+            </Column>
+            <Column>
+                <Select TValue="PatientStatus?" @bind-SelectedValue="FilterStatus" Placeholder="@L["Patient Status"]">
+                    <SelectItem TValue="PatientStatus" Value="PatientStatus.AnyProcessNotDefined">@L["AnyProcessNotDefined"]</SelectItem>
+                    <SelectItem TValue="PatientStatus" Value="PatientStatus.WaitingForReport">@L["WaitingForReport"]</SelectItem>
+                    <SelectItem TValue="PatientStatus" Value="PatientStatus.Diagnosed">@L["Diagnosed"]</SelectItem>
+                    <SelectItem TValue="PatientStatus" Value="PatientStatus.Analyzed">@L["Analyzed"]</SelectItem>
+                </Select>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Style="background-color: #ff9800; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="OnFilter">@L["Filter"]</Button>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Style="background-color: #ff9800; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="OnReset">@L["Reset"]</Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="PatientDto"
+                  Data="Entities"
+                  ReadData="OnDataGridReadAsync"
+                  CurrentPage="CurrentPage"
+                  TotalItems="TotalCount"
+                  ShowPager="true"
+                  PageSize="PageSize">
+            <DataGridColumns>
+                <DataGridEntityActionsColumn TItem="PatientDto" @ref="@EntityActionsColumn">
+                    <DisplayTemplate>
+                        <EntityActions TItem="PatientDto" EntityActionsColumn="@EntityActionsColumn">
+                            <EntityAction TItem="PatientDto"
+                                          Text="@L["View&Edit"]"
+                                          Clicked="() => OpenEditModalAsync(context)" />
+                            <EntityAction TItem="PatientDto"
+                                          Text="@L["Delete"]"
+                                          Clicked="() => DeleteEntityAsync(context)"
+                                          ConfirmationMessage="()=>GetDeleteConfirmationMessage(context)" />
+                        </EntityActions>
+                    </DisplayTemplate>
+                </DataGridEntityActionsColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.FirstName)"
+                                Caption="@L["FirstName"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.LastName)"
+                                Caption="@L["LastName"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.Age)"
+                                Caption="@L["Age"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.Gender)"
+                                Caption="@L["Gender"]">
+                    <DisplayTemplate>
+                        @L[$"{context.Gender}"]
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.Status)"
+                                Caption="@L["Status"]">
+                    <DisplayTemplate>
+                        @L[$"{context.Status}"]
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.AdmissionDate)"
+                                Caption="@L["AdmissionDate"]">
+                    <DisplayTemplate>
+                        @context.AdmissionDate.ToShortDateString()
+                    </DisplayTemplate>
+                </DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.Notes)"
+                                Caption="@L["Notes"]"></DataGridColumn>
+                <DataGridColumn TItem="PatientDto"
+                                Field="@nameof(PatientDto.CreationTime)"
+                                Caption="@L["CreationTime"]">
+                    <DisplayTemplate>
+                        @context.CreationTime.ToLongDateString()
+                    </DisplayTemplate>
+                </DataGridColumn>
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<Modal @ref="@CreateModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@L["NewPatient"]</ModalTitle>
+                <CloseButton Clicked="CloseCreateModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@CreateValidationsRef" Model="@NewEntity" ValidateOnLoad="false">
+
+                    <Field>
+                        <FieldLabel>@L["FirstName"]</FieldLabel>
+                        <TextEdit @bind-Text="@NewEntity.FirstName">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>@L["LastName"]</FieldLabel>
+                        <TextEdit @bind-Text="@NewEntity.LastName">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Age"]</FieldLabel>
+                        <NumericEdit TValue="int" @bind-Value="NewEntity.Age"/>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>@L["Gender"]</FieldLabel>
+                        <Select TValue="Gender" @bind-SelectedValue="@NewEntity.Gender">
+                            @foreach (Gender patientGenderValue in Enum.GetValues(typeof(Gender)))
+                            {
+                                <SelectItem TValue="Gender" Value="@patientGenderValue">
+                                    @L[$"{patientGenderValue}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["AdmissionDate"]</FieldLabel>
+                        <DateEdit TValue="DateTime" @bind-Date="NewEntity.AdmissionDate"/>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="PatientStatus" @bind-SelectedValue="@NewEntity.Status">
+                            @foreach (PatientStatus patientStatusValue in Enum.GetValues(typeof(PatientStatus)))
+                            {
+                                <SelectItem TValue="PatientStatus" Value="@patientStatusValue">
+                                    @L[$"{patientStatusValue}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Notes"]</FieldLabel>
+                        <TextEdit @bind-Text="@NewEntity.Notes">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Style="background-color: #ff9800; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="CloseCreateModalAsync">@L["Cancel"]</Button>
+                <Button Style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="CreateEntityAsync">@L["Save"]</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="@EditModal">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <Form>
+            <ModalHeader>
+                <ModalTitle>@EditingEntity.FirstName @EditingEntity.LastName</ModalTitle>
+                <CloseButton Clicked="CloseEditModalAsync"/>
+            </ModalHeader>
+            <ModalBody>
+                <Validations @ref="@EditValidationsRef" Model="@EditingEntity" ValidateOnLoad="false">
+
+                    <Field>
+                        <FieldLabel>@L["FirstName"]</FieldLabel>
+                        <TextEdit @bind-Text="@EditingEntity.FirstName">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>@L["LastName"]</FieldLabel>
+                        <TextEdit @bind-Text="@EditingEntity.LastName">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Age"]</FieldLabel>
+                        <NumericEdit TValue="int" @bind-Value="EditingEntity.Age"/>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>@L["Gender"]</FieldLabel>
+                        <Select TValue="Gender" @bind-SelectedValue="@EditingEntity.Gender">
+                            @foreach (Gender patientGenderValue in Enum.GetValues(typeof(Gender)))
+                            {
+                                <SelectItem TValue="Gender" Value="@patientGenderValue">
+                                    @L[$"{patientGenderValue}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["AdmissionDate"]</FieldLabel>
+                        <DateEdit TValue="DateTime" @bind-Date="EditingEntity.AdmissionDate"/>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Status"]</FieldLabel>
+                        <Select TValue="PatientStatus" @bind-SelectedValue="@EditingEntity.Status">
+                            @foreach (PatientStatus patientStatusValue in Enum.GetValues(typeof(PatientStatus)))
+                            {
+                                <SelectItem TValue="PatientStatus" Value="@patientStatusValue">
+                                    @L[$"{patientStatusValue}"]
+                                </SelectItem>
+                            }
+                        </Select>
+                    </Field>
+                    <Field>
+                        <FieldLabel>@L["Notes"]</FieldLabel>
+                        <TextEdit @bind-Text="@EditingEntity.Notes">
+                            <Feedback>
+                                <ValidationError/>
+                            </Feedback>
+                        </TextEdit>
+                    </Field>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Style="background-color: #ff9800; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Clicked="CloseEditModalAsync">@L["Cancel"]</Button>
+                <Button Style="background-color: #28a745; color: white; border: none; padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;"
+                        Type="@ButtonType.Submit"
+                        PreventDefaultOnSubmit="true"
+                        Clicked="UpdateEntityAsync">@L["Save"]</Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>

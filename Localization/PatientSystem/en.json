@@ -1,0 +1,60 @@
+{
+  "culture": "en",
+  "texts": {
+    "Welcome_Title": "Welcome, INTERGEN HBYS",
+    "Welcome_Text": "INTERGEN HBYS is a software solution developed to be used as a hospital information management system.",
+    "PatientSystem": "Patient Transactions",
+    "Patients": "Patient Registration",
+    "Actions": "Actions",
+    "Close": "Close",
+    "Delete": "Delete",
+    "Edit": "Edit/View",
+    "View&Edit": "View/Edit",
+    "Save": "Save",
+    "Cancel": "Cancel",
+
+    "NewPatient": "New Patient",
+    "Search": "Search",
+    "Filter": "Filter",
+    "Reset": "Reset",
+    "Filter by Age": "Filter by Age",
+    "Filter by Admission Date": "Filter by Admission Date",
+    "SearchPatients": "Search Patients",
+    
+    "Patient Status": "Patient Status",
+    "AnyProcessNotDefined": "Any process not defined",
+    "WaitingForReport": "Waiting for report",
+    "Diagnosed": "Diagnosed",
+    "Analyzed": "Analyzed",
+
+    "Undefined": "Undefined",
+    "Male": "Male",
+    "Female": "Female",
+    "Other": "Other",
+
+    "FirstName": "First Name",
+    "LastName": "Last Name",
+    "Age": "Age",
+    "Gender": "Gender",
+    "Status": "Status",
+    "AdmissionDate": "Admission Date",
+    "Notes": "Notes",
+    "CreationTime": "Creation Time",
+    
+    "AreYouSure": "Are you sure?",
+    "AreYouSureToDelete": "Are you sure you want to delete?",
+    "PatientDeletionConfirmationMessage": "Are you sure to delete the patient '{0}'?",
+    "SuccessfullyDeleted": "Successfully deleted!",
+    
+    "Getting Started": "Getting Started",
+    "Started_Text": "To get started, you can create a new patient by clicking the 'New Patient' button in the 'Patient Registration' panel under 'Patient Transactions' in the menu.",
+    
+    "Permission:PatientSystem": "Patient Transactions",
+    "Permission:Patients": "Patient Registration",
+    "Permission:Patient.Create": "Creating new patients",
+    "Permission:Patient.Edit": "Editing the patients",
+    "Permission:Patient.Delete": "Deleting the patients",
+    
+    "Menu:Home": "Home"
+  }
+}

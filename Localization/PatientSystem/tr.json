@@ -1,0 +1,63 @@
+{
+  "culture": "tr",
+  "texts": {
+    "Welcome_Title": "Hoş Geldiniz, INTERGEN HBYS",
+    "Welcome_Text": "INTERGEN HBYS, hastane bilgi yönetim sistemi olarak kullanılmak üzere geliştirilen bir yazılım çözümüdür.",
+    "PatientSystem": "Hasta İşlemleri",
+    "Patients": "Hasta Kaydı",
+    
+    "Actions": "İşlemler",
+    "Close": "Kapat",
+    "Delete": "Sil",
+    "Edit": "Düzenle/Görüntüle",
+    "View&Edit": "Görüntüle/Düzenle",
+    "Save": "Kaydet",
+    "Cancel": "İptal",
+
+    "NewPatient": "Yeni Hasta",
+    "Search": "Ara",
+    "Filter": "Filtrele",
+    "Reset": "Sıfırla",
+    
+    "Filter by Age": "Yaşa Göre Filtrele",
+    "Filter by Admission Date": "Kabul Tarihine Göre Filtrele",
+    "SearchPatients": "Hastaları Ara",
+    
+    "Patient Status": "Hasta Durumu",
+    "AnyProcessNotDefined": "Tanımlı işlem yok",
+    "WaitingForReport": "Rapor Bekleniyor",
+    "Diagnosed": "Teşhis Kondu",
+    "Analyzed": "Analiz Edildi",
+
+    "Undefined": "Tanımlanmamış",
+    "Male": "Erkek",
+    "Female": "Kadın",
+    "Other": "Diğer",
+    
+    "FirstName": "Ad",
+    "LastName": "Soyad",
+    "Age": "Yaş",
+    "Gender": "Cinsiyet",
+    "Status": "Durum",
+    "AdmissionDate": "Hasta Kabul Tarihi",
+    "Notes": "Notlar",
+    "CreationTime": "Oluşturulma Zamanı",
+
+    "AreYouSure": "Emin misiniz?",
+    "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
+    "PatientDeletionConfirmationMessage": "Hasta '{0}' silinsin mi?",
+    "SuccessfullyDeleted": "Başarıyla silindi!",
+
+    "Getting Started": "Başlarken",
+    "Started_Text": "Başlamak için menüde bulunan 'Hasta İşlemleri' altında bulunan 'Hasta Kaydı' panelinden 'Yeni Hasta' butonuna tıklayarak yeni bir hasta oluşturabilirsiniz.",
+
+    "Permission:PatientSystem": "Hasta İşlemleri",
+    "Permission:Patient": "Hasta Kaydı",
+    "Permission:Patient.Create": "Yeni hasta oluşturma",
+    "Permission:Patient.Edit": "Hasta düzenleme",
+    "Permission:Patient.Delete": "Hasta silme",
+
+    "Menu:Home": "Ana Sayfa"
+  }
+
+}

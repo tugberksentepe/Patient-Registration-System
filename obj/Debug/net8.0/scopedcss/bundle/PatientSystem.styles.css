@@ -1,0 +1,16 @@
+/* _content/PatientSystem/Components/Pages/Index.razor.rz.scp.css */
+/* Getting-Started */
+.card-bg-image[b-pzkcibug0i] {
+    pointer-events: none;
+    position: absolute;
+    width: 630px;
+    height: auto;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+}
+.starting-content[b-pzkcibug0i] {
+    position: relative;
+    z-index: 2;
+}
+/* Getting-Started End */
